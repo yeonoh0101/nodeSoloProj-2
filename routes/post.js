@@ -1,6 +1,6 @@
 const express = require("express"); // express module을 express 변수에 할당
 const router = express.Router(); // express.Router로 호출한다
-
+const authMiddleware = require("../middlewares/auth-middleware.js");
 const Posts = require("../schemas/post.js"); // "../schemas/post.js"를 불러온다
 
 // 전체 게시글 조회 API
@@ -17,9 +17,10 @@ router.get("/posts", async (req, res) => {
 });
 
 // 게시글 추가 API
-router.post("/posts", async (req, res) => {
+router.post("/posts", authMiddleware, async (req, res) => {
   // "/posts" 경로에 대한 POST 요청을 보낸다.
   const { user, password, title, content } = req.body;
+  const { nickname } = res.locals.user;
 
   const existingPosts = await Posts.find({ user }); // user로 이미 존재하는 게시물을 조회
   if (existingPosts.length) {

@@ -13,8 +13,8 @@ router.post("/login", async (req, res) => {
   // 1. 이메일에 일치하는 유저가 존재하지 않거나
   // 2. 유저를 찾았지만, 유저의 비밀번호와, 입력한 비밀번호가 다를때,
   if (!user || password !== user.password) {
-    res.status(400).json({
-      errorMessage: "로그인에 실패하였습니다.",
+    res.status(412).json({
+      error: "닉네임 또는 패스워드를 확인해주세요.",
     });
     return;
   }
