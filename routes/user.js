@@ -61,7 +61,7 @@ router.post("/signup", async (req, res) => {
   const user = new userSchema({ nickname, password });
   await user.save(); // DB에 저장한다.
 
-  return res.status(201).json({});
+  return res.status(201).json({ message: "회원 가입에 성공하였습니다." });
 });
 
 module.exports = router;
