@@ -2,21 +2,18 @@ const mongoose = require("mongoose"); // mongoose 모듈을 가져와서 mongoos
 
 // mongoose.Schema를 사용하여 스키마를 생성한다.
 const commentsSchema = new mongoose.Schema({
-  // commestId 필드
-  commentId: {
-    type: String, // String type 지정
-    required: true, // 꼭 있어야되는 값
+  userId: {
+    type: String, // Number type 지정
+    required: true,
   },
 
-  // password 필드
-  password: {
-    type: Number, // Number type 지정
-    required: true, // 꼭 있어야되는 값
-    unique: true, // 값을 독립적으로 지정(중복된 값 X)
+  postId: {
+    type: String, // Number type 지정
+    required: true,
   },
 
-  // user 필드
-  user: {
+  // nickname 필드
+  nickname: {
     type: String, // String type 지정
     required: true, // 꼭 있어야되는 값
   },
