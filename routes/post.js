@@ -32,7 +32,7 @@ router.post("/posts", authMiddleware, async (req, res) => {
     createdAt: new Date(), // new Date()를 사용하여 현재의 날짜와 시간으로 설정한다.
   });
 
-  res.status(201).json({ posts: "게시글을 생성하였습니다." });
+  res.status(201).json({ posts: "게시글 작성에 성공하였습니다." });
 });
 
 // 게시글 상세 조회 API
@@ -72,14 +72,14 @@ router.patch("/posts/:postId", authMiddleware, async (req, res) => {
     }
     if (posts.userId !== user.userId) {
       return res
-        .status(400)
+        .status(403)
         .json({ error: "게시글 수정의 권한이 존재하지 않습니다." });
     }
     await Posts.updateOne({ _id: postId }, { $set: { title, content } }); // 게시물 수정한 것 업데이트
-    res.json({ data: "게시글 수정에 성공했습니다." });
+    res.status(200).json({ data: "게시글 수정에 성공했습니다." });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "게시글 수정에 실패했습니다." }); // 오류가 발생한 경우 오류메세지를 보여준다.
+    res.status(400).json({ error: "게시글 수정에 실패했습니다." }); // 오류가 발생한 경우 오류메세지를 보여준다.
   }
 });
 
@@ -101,7 +101,7 @@ router.delete("/posts/:postId", authMiddleware, async (req, res) => {
     const delPost = await Posts.findByIdAndDelete(postId); // findByIdAndDelete() 메서드를 써서 게시물을 삭제한다.
     res.status(200).json({ data: "게시글을 삭제하였습니다." }); // 완료시 보여주는 메세지
   } catch (err) {
-    res.status(400).json({ error: "게시글이 정상적으로 삭제되지 않았습니다." }); // 오류시 보여주는 메세지
+    res.status(401).json({ error: "게시글이 정상적으로 삭제되지 않았습니다." }); // 오류시 보여주는 메세지
   }
 });
 

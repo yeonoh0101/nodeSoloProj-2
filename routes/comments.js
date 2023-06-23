@@ -12,7 +12,7 @@ router.get("/posts/:postId/comments", async (req, res) => {
       .sort({ createdAt: -1 }); // createdAt을 기준으로 내림차순으로 정렬한다(최신순)
     res.json({ data: comments }); // json형태로 모든 댓글을 조회한다.
   } catch (error) {
-    res.status(404).json({ error: "댓글 조회에 실패했습니다." }); // 예외 처리를 하는데 HTTP 상태 코드를 404로 알리고 errorMessage를 json형태로 받는다
+    res.status(404).json({ error: "댓글 조회에 실패하였습니다." }); // 예외 처리를 하는데 HTTP 상태 코드를 404로 알리고 errorMessage를 json형태로 받는다
   }
 });
 
@@ -40,7 +40,7 @@ router.post("/posts/:postId/comments", authMiddleware, async (req, res) => {
     createdAt: new Date(), // new Date()를 사용하여 현재의 날짜와 시간으로 설정한다
   });
 
-  res.json({ comments: "댓글 작성이 완료되었습니다." });
+  res.status(201).json({ comments: "댓글을 작성하였습니다." });
 });
 
 // 댓글 수정 API
@@ -53,34 +53,32 @@ router.patch(
     const { user } = res.locals;
 
     try {
-      // 게시물의 존재 여부를 확인합니다.
+      // 게시글의 존재 여부를 확인합니다.
       const post = await Posts.findById(postId);
       if (!post) {
-        return res.status(404).json({ error: "게시물을 찾을 수 없습니다." });
+        return res.status(404).json({ error: "게시글을 찾을 수 없습니다." });
       }
-      // 코멘트의 존재 여부를 확인합니다.
+      // 댓글의 존재 여부를 확인합니다.
       const existingComment = await Comments.findById(commentId);
       if (!existingComment) {
-        return res.status(404).json({ error: "코멘트를 찾을 수 없습니다." });
+        return res.status(404).json({ error: "댓글이 존재하지 않습니다." });
       }
 
       if (user.userId !== existingComment.userId) {
-        return res.status(400).json({ error: "접근이 허용되지 않습니다." });
+        return res.status(403).json({ error: "접근이 허용되지 않습니다." });
       }
 
       const comments = await Comments.findById(commentId); // commentId로 댓글 조회
       if (!comments) {
         // comments가 없을 경우
-        return res
-          .status(404)
-          .json({ error: "해당하는 댓글을 찾을 수 없습니다." }); // HTTP 상태 코드를 404로 알리고 json형태로 errorMessage를 받는다.
+        return res.status(404).json({ error: "댓글이 존재하지 않습니다." }); // HTTP 상태 코드를 404로 알리고 json형태로 errorMessage를 받는다.
       }
 
       await Comments.updateOne({ _id: commentId }, { $set: { content } }); // Comments.updateOne() 메소드를 사용하여 commentId와 password를 기준으로 댓글을 수정한다. $set 연산자를 사용하여 content를 업데이트한다.
-      res.json({ data: "댓글 수정에 성공했습니다." });
+      res.status(200).json({ data: "댓글 수정에 성공했습니다." });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: "댓글 수정에 실패했습니다." }); // 예외 처리를 하는데 HTTP 상태 코드를 404로 알리고 errorMessage를 json형태로 받는다.
+      res.status(400).json({ error: "댓글 수정에 실패하였습니다." }); // 예외 처리를 하는데 HTTP 상태 코드를 404로 알리고 errorMessage를 json형태로 받는다.
     }
   }
 );
@@ -97,13 +95,13 @@ router.delete(
       // 게시물의 존재 여부를 확인합니다.
       const post = await Posts.findById(postId);
       if (!post) {
-        return res.status(404).json({ error: "게시물을 찾을 수 없습니다." });
+        return res.status(404).json({ error: "게시글을 찾을 수 없습니다." });
       }
 
-      // 코멘트의 존재 여부를 확인합니다.
+      // 댓글의 존재 여부를 확인합니다.
       const existingComment = await Comments.findById(commentId);
       if (!existingComment) {
-        return res.status(404).json({ error: "코멘트를 찾을 수 없습니다." });
+        return res.status(404).json({ error: "댓글이 존재하지 않습니다." });
       }
 
       if (user.userId !== existingComment.userId) {
@@ -115,7 +113,7 @@ router.delete(
 
       res.status(200).json({ message: "댓글을 삭제하였습니다." });
     } catch (error) {
-      res.status(500).json({ error: "댓글 삭제에 실패했습니다." });
+      res.status(400).json({ error: "댓글 삭제에 실패했습니다." });
     }
   }
 );

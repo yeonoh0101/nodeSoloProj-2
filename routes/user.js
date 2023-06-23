@@ -21,7 +21,7 @@ router.post("/signup", async (req, res) => {
   // password, confirmpassword 값 확인
   if (password !== confirmPassword) {
     res.status(412).json({
-      error: "비밀번호와 비밀번호 확인값이 일치하지 않습니다.",
+      error: "비밀번호가 일치하지 않습니다.",
     });
     return;
   }
@@ -52,7 +52,7 @@ router.post("/signup", async (req, res) => {
     $or: [{ nickname }], // nickname이 일치할때 조회한다.
   });
   if (isExisUser) {
-    res.status(400).json({
+    res.status(412).json({
       errorMessage: "닉네임이 이미 사용중입니다.",
     });
     return;
