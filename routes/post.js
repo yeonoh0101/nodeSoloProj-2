@@ -1,6 +1,6 @@
 const express = require("express"); // express module을 express 변수에 할당
-const router = express.Router(); // express.Router로 호출한다
-const authMiddleware = require("../middlewares/auth-middleware.js");
+const router = express.Router(); // express.Router()로 라우터 객체 생성
+const authMiddleware = require("../middlewares/auth-middleware.js"); // "../middlewares/auth-middleware.js" 파일에서 인증 미들웨어를 가져온다.
 const Posts = require("../schemas/post.js"); // "../schemas/post.js"를 불러온다
 
 // 전체 게시글 조회 API
@@ -8,11 +8,11 @@ router.get("/posts", async (req, res) => {
   // "/posts" 경로에 대한 GET 요청을 보낸다
   try {
     const posts = await Posts.find({}) // Posts에서 모든 게시글을 조회한다
-      .select(" -__v") // password, content, __v 필드를 제외하고 조회한다.
+      .select(" -__v") // "__v" 필드를 제외하고 조회한다.
       .sort({ createdAt: -1 }); // createdAt 필드를 기준으로 내림차순으 정렬한다(최신순)
     res.json({ data: posts }); // 조회된 게시글을 JSON 형식으로 응답한다
   } catch (error) {
-    res.status(400).json({ error: "게시글 조회에 실패했습니다." }); // 오류가 발생한다면 json형식으로 error메세지를 보여준다.
+    res.status(400).json({ error: "게시글 조회에 실패했습니다." }); // 오류가 발생한다면 json형식으로 error메세지를 응답한다.
   }
 });
 
@@ -21,10 +21,9 @@ router.post("/posts", authMiddleware, async (req, res) => {
   // "/posts" 경로에 대한 POST 요청을 보낸다.
   const { title, content } = req.body;
   const { user } = res.locals;
-  console.log(user);
 
   const createdPosts = await Posts.create({
-    // Posts.create() 메소드를 사용하여 새로운 게시글을 생성한다.생성하는 게시글 내용을 createdPosts 변수에 할당한다.
+    // Posts.create() 메소드를 사용하여 새로운 게시글 생성한다.
     userId: user.userId,
     nickname: user.nickname,
     title,
@@ -49,7 +48,7 @@ router.get("/posts/:postId", async (req, res) => {
         .status(400)
         .json({ error: "해당하는 게시글을 찾을 수 없습니다." });
     } // HTTP 상태 코드를 404로 알리고 json형태로 errorMessage를 받는다.
-    res.json({ data: posts }); // 조회된 게시물을 JSON 형식으로 보여준다
+    res.json({ data: posts }); // 조회된 게시물을 JSON 형식으로 응답해준다
   } catch (error) {
     res.status(400).json({ error: "게시글 조회에 실패했습니다." });
   } // 오류가 발생한다면 json형식으로 error메세지를 보여준다.

@@ -2,14 +2,16 @@ const mongoose = require("mongoose"); // mongoose 모듈을 가져와서 mongoos
 
 // mongoose.Schema를 사용하여 스키마를 생성한다.
 const commentsSchema = new mongoose.Schema({
+  // userId 필드
   userId: {
     type: String, // Number type 지정
-    required: true,
+    required: true, // 꼭 있어야되는 값
   },
 
+  // postId 필드
   postId: {
     type: String, // Number type 지정
-    required: true,
+    required: true, // 꼭 있어야되는 값
   },
 
   // nickname 필드
